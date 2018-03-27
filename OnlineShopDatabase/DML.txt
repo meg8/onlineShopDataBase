@@ -1,0 +1,66 @@
+/* ------------------------------------Klient---------------- */
+
+INSERT INTO Klient VALUES (1,'Elzbieta','Kot','Kowaliowa 67','08-400','Garwolin','Polska','+48509765345'); 
+INSERT INTO Klient VALUES (2,'Aleksandra','Urlich','Lolka 59/74','07-360','Warszawa','Polska','+48601764025'); 
+INSERT INTO Klient VALUES (3,'Witold','Zbyrasz','Trybuny 4','04-945','Poznan','Polska','+48500627645'); 
+INSERT INTO Klient VALUES (4,'John','Zet','Seifertova 3','130 00','Praga','Czechy','+4201764025'); 
+
+/* ------------------------------Opiekun_zamowienia---------- */
+
+INSERT INTO Opiekun_zamowienia VALUES(1,'Jan','Kulczyk','66/05/14','15/06/09');      
+INSERT INTO Opiekun_zamowienia VALUES (2,'Maria','Wider','78/03/10','15/06/09');      
+INSERT INTO Opiekun_zamowienia VALUES (3,'Arkadiusz','Lach','84/12/27','15/08/11');  
+INSERT INTO Opiekun_zamowienia VALUES (4,'Ewa','Salen','86/10/04','15/08/23');      
+
+/* -------------------------------Dane_zamowienia----------- */
+
+INSERT INTO Dane_zamowienia VALUES (1,1,1,'15/06/15','odbior wlasny',5.0);
+INSERT INTO Dane_zamowienia VALUES (2,2,2,'15/06/22','przesylka kurierska DHL',20.5);
+INSERT INTO Dane_zamowienia VALUES (3,1,2,'15/07/01','odbior wlasny',15.0);
+INSERT INTO Dane_zamowienia VALUES (4,1,1,'15/07/11','odbior wlasny',10.0);
+INSERT INTO Dane_zamowienia VALUES (5,3,2,'15/08/02','przesylka kurierska DHL',20.50);
+INSERT INTO Dane_zamowienia VALUES (6,4,3,'15/08/13','przesylka kurierska TNT',240.50);
+INSERT INTO Dane_zamowienia VALUES (7,3,3,'15/08/18','przesylka kurierska DHL',20.50);
+INSERT INTO Dane_zamowienia VALUES (8,4,4,'15/08/25','przesylka kurierska TNT',70.5);
+
+
+/* ------------------------------------Artykul--------------- */
+
+INSERT INTO Artykul VALUES (1,'wazon szklany pieciokat jasny roz',199.50,5901234123445);
+INSERT INTO Artykul VALUES (2,'wazon drewniany kwadrat blekit',219.50,5901234123435);
+INSERT INTO Artykul VALUES (3,'figurka aniol biel',89.50,5901234143986);
+INSERT INTO Artykul VALUES (4,'zyrandol medium zloto',4699.50,5059012300058);
+INSERT INTO Artykul VALUES (5,'fotel muszla turkus',3299.50,5901234155553);
+
+/* ------------------------------Zamowione_artykuly---------- */	
+
+INSERT INTO Zamowione_artykuly VALUES (1,1,3,190.0);
+INSERT INTO Zamowione_artykuly VALUES (1,2,2,215.0);
+INSERT INTO Zamowione_artykuly VALUES (2,2,2,219.5);
+INSERT INTO Zamowione_artykuly VALUES (3,5,2,3200.0);
+INSERT INTO Zamowione_artykuly VALUES (4,4,1,699.5);
+INSERT INTO Zamowione_artykuly VALUES (5,3,1,89.5);
+INSERT INTO Zamowione_artykuly VALUES (6,4,1,6999.50);
+INSERT INTO Zamowione_artykuly VALUES (7,1,2,195.0);
+INSERT INTO Zamowione_artykuly VALUES (8,3,2,85.0);
+
+/* ------------------------------------Magazyn--------------- */
+
+INSERT INTO Magazyn VALUES (1,32);
+INSERT INTO Magazyn VALUES (2,54);
+INSERT INTO Magazyn VALUES (3,43);
+INSERT INTO Magazyn VALUES (4,4);
+INSERT INTO Magazyn VALUES (5,6);
+
+/* -----------------------------Opiekun_i_zamowienia--------- */
+
+INSERT INTO Opiekun_i_zamowienia VALUES (1,1);
+INSERT INTO Opiekun_i_zamowienia VALUES (2,1);
+INSERT INTO Opiekun_i_zamowienia VALUES (2,2);
+INSERT INTO Opiekun_i_zamowienia VALUES (3,2);
+INSERT INTO Opiekun_i_zamowienia VALUES (4,1);
+INSERT INTO Opiekun_i_zamowienia VALUES (5,2);
+INSERT INTO Opiekun_i_zamowienia VALUES (6,3);
+INSERT INTO Opiekun_i_zamowienia VALUES (7,3);
+INSERT INTO Opiekun_i_zamowienia VALUES (8,4);
+INSERT INTO Opiekun_i_zamowienia VALUES (8,3);

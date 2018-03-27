@@ -1,0 +1,162 @@
+/*------- A.	Wyœwietl dane zamówieñ realizowanych w Polsce */
+
+SELECT * FROM Klient WHERE panstwo=’Polska’;
+
+
+/*------- B.	Wyœwietl imiona i nazwiska osób, które s¹ aktualnymi opiekunami konkretnych zamówieñ.*/
+
+SELECT d.id_zamowienia, o.imie, o.nazwisko
+FROM Dane_zamowienia d,  Opiekun_zamowienia o
+WHERE d.id_opiekuna=o.id_opiekuna
+ORDER by d.id_zamowienia;
+
+
+/*------- C.	Wyœwietl id_zamowienia wraz z suma do zaplaty za wszystkie artykuly (bez kosztów dodatkowych posortowane rosn¹co zdodnie z id_zamowienia*/
+
+SELECT d.id_zamowienia, sum(z.SREDNIA_CENA_SZTUKI*z.ILOSC)Cena_artykulow
+FROM Dane_zamowienia d, Zamowione_artykuly z
+WHERE d.id_zamowienia=z.id_zamowienia
+group by d.ID_ZAMOWIENIA
+order by d.ID_ZAMOWIENIA;
+
+
+/*------- D.	Wyœwietl nazwe opis artykulu i obecny jego stan magazynowy .*/
+
+SELECT a.opis , m.ilosc_sztuk
+FROM Artykul a, Magazyn m
+WHERE a.id_artykulu=m.id_artykulu;
+
+
+/*------- E.	Oblicz ile sztuk ka¿dego z artyku³ów wyst¹pi³o w sumie we wszystkich zamówieniach  */	
+
+SELECT id_artykulu, SUM(ilosc)
+FROM Zamowione_artykuly
+GROUP BY id_artykulu
+ORDER BY ID_ARTYKULU;
+
+
+/*------- F.	Oblicz œrednia kosztów dodatkowych zamówieñ od sierpnia 2015 */
+
+SELECT AVG (koszty_dodatkowe) Srednia
+FROM Dane_zamowienia
+WHERE Data_zamówienia>'15/07/31';
+
+
+/*------- G.	Wybierz te id_klienta, gdzie by³y minimum 3 zamówienia  */
+
+SELECT id_klienta, count(*)
+FROM Dane_zamowienia
+GROUP by id_klienta
+HAVING count(*)>2;
+
+/*------- H.	Podaj zamówienia, którym w trakcie realizacji zmieni³ siê opiekun  */
+
+SELECT id_zamowienia
+FROM Opiekun_i_zamowienia
+GROUP BY id_zamowienia
+HAVING COUNT (*)>1;
+
+/*------- I.	Wybierz te id_klienta, gdzie by³y minimum 2 zamówienia i ich opiekunem aktualnym nie jest Arkadiusz Lach  */
+
+SELECT d.id_klienta
+FROM Dane_zamowienia d, Opiekun_zamowienia o
+WHERE d.id_opiekuna=o.id_opiekuna AND o.imie NOT LIKE 'Arkadiusz' AND o.nazwisko NOT LIKE 'Lach'
+GROUP by id_klienta
+HAVING count(*)>1;
+
+/*------- J.	Podaj zamówienia z zagranicy, którym w trakcie realizacji zmieni³ siê opiekun. */
+
+SELECT op.id_zamowienia
+FROM Opiekun_i_zamowienia op, Klient k, Dane_zamowienia d
+WHERE d.id_klienta=k.id_klienta AND d.id_opiekuna=op.id_opiekuna 
+AND k.panstwo NOT LIKE 'Polska'
+GROUP BY op.id_zamowienia
+HAVING COUNT (*)>1;
+
+/*------- K.	Podaj id klientów i zamówieñ wraz z sum¹ zamówionych artyku³ów, gdzie przy okazji jednego zamówienia znaz³o siê wiêcej ni¿ jedna sztuka artyku³u  */
+
+SELECT d.id_klienta,z.id_zamowienia, SUM(z.ilosc)
+FROM Dane_zamowienia d, Zamowione_artykuly z 
+WHERE z.id_zamowienia=d.id_zamowienia 
+GROUP BY d.id_klienta,z.id_zamowienia
+HAVING SUM(z.ilosc)>1
+ORDER BY d.id_klienta;
+
+/*------- L.	Wyœwietl id_zamowienia wraz z suma do zaplaty za wszystkie artykuly uwzgledniajac koszty dodatkowe sortuj¹c malej¹co wg calosci do zaplaty  */
+
+SELECT d.id_zamowienia, (n.cena_artykulow+d.koszty_dodatkowe)Calosc_do_zaplaty
+FROM Dane_zamowienia d, 
+(SELECT a.id_zamowienia,  sum(b.SREDNIA_CENA_SZTUKI*b.ILOSC)cena_artykulow
+FROM Dane_zamowienia a, Zamowione_artykuly b
+WHERE a.id_zamowienia=b.id_zamowienia
+group by a.ID_ZAMOWIENIA
+order by a.ID_ZAMOWIENIA) n
+WHERE d.ID_ZAMOWIENIA=n.id_zamowienia
+ORDER BY (n.cena_artykulow+d.koszty_dodatkowe) DESC;
+
+
+/*------- M.	Wyœwietl id_zamowienia wraz z suma do zaplaty za wszystkie artykuly (bez kosztów dodatkowych w tych zamówieniach, którym nie zmienial siê opiekun */
+	
+SELECT d.id_zamowienia, sum(z.SREDNIA_CENA_SZTUKI*z.ILOSC)Cena_artykulow
+FROM Dane_zamowienia d, Zamowione_artykuly z
+WHERE d.id_zamowienia=z.id_zamowienia AND d.ID_ZAMOWIENIA NOT IN
+(SELECT id_zamowienia
+FROM Opiekun_i_zamowienia
+GROUP BY id_zamowienia
+HAVING COUNT (*)>1)
+group by d.ID_ZAMOWIENIA
+order by d.ID_ZAMOWIENIA;
+
+/*------- N.	Wyœwietl 2 najdluzej zatrudnione osoby w firmie wraz z iloscia zamowien, z którymi kiedykolwiek mieli do czynienia */
+
+SELECT o.IMIE, o.NAZWISKO, o.DATA_ZATRUDNIENIA,p.ILOSC_ZAMOWIEN
+FROM Opiekun_zamowienia o,
+(SELECT id_opiekuna, COUNT(*)ILOSC_ZAMOWIEN
+FROM OPIEKUN_I_ZAMOWIENIA
+GROUP BY ID_OPIEKUNA) p
+WHERE o.id_opiekuna=p.id_opiekuna AND 2>
+(SELECT count(*)
+FROM OPIEKUN_ZAMOWIENIA z
+WHERE o.DATA_ZATRUDNIENIA > z.data_zatrudnienia);
+
+/*------- O.	Wyœwietl sumy do zaplaty wszystkich zamowien zamowionych przez poszczegolnych klientow  */
+
+
+SELECT k.NAZWISKO,k.IMIE,SUM(n.CALOSC_DO_ZAPLATY)
+FROM Klient k,DANE_ZAMOWIENIA d,
+(SELECT d.id_zamowienia,(n.cena_artykulow+d.koszty_dodatkowe)Calosc_do_zaplaty
+FROM Dane_zamowienia d,  
+(SELECT a.id_zamowienia,  sum(b.SREDNIA_CENA_SZTUKI*b.ILOSC)cena_artykulow
+FROM Dane_zamowienia a, Zamowione_artykuly b
+WHERE a.id_zamowienia=b.id_zamowienia
+group by a.ID_ZAMOWIENIA
+order by a.ID_ZAMOWIENIA) n
+WHERE d.ID_ZAMOWIENIA=n.id_zamowienia
+ORDER BY d.id_zamowienia) n
+WHERE k.ID_KLIENTA=d.ID_KLIENTA AND d.ID_ZAMOWIENIA=n.id_zamowienia
+GROUP BY k.NAZWISKO, k.IMIE;
+
+
+/*------- P.	Wyœwietl id_zamowienia wraz z ostatnim opiekunem zamowien, w których sposobem realizacji by³ „odbior wlasny”  */
+	
+
+SELECT z.ID_ZAMOWIENIA, o.IMIE, o.NAZWISKO 
+FROM Opiekun_zamowienia o, Opiekun_i_zamowienia z
+WHERE o.ID_OPIEKUNA=z.ID_OPIEKUNA
+AND z.ID_ZAMOWIENIA IN
+(SELECT ID_ZAMOWIENIA
+FROM DANE_ZAMOWIENIA 
+WHERE SPOSOB_REALIZACJI LIKE 'odbior wlasny');
+
+
+/*------- Q.	Wyœwietl te id_zamowien wraz ze imieniem i nazwiskiem skladajacych je klientów, gdzie wœród zamówionych aktykulow znalaz³y siê wazony  */
+
+SELECT d.ID_ZAMOWIENIA, k.NAZWISKO,k.IMIE
+FROM Klient k,DANE_ZAMOWIENIA d
+WHERE d.ID_KLIENTA=k.ID_KLIENTA AND d.ID_ZAMOWIENIA IN
+(SELECT DISTINCT za.ID_ZAMOWIENIA
+FROM Zamowione_artykuly za, ARTYKUL a
+WHERE za.ID_ARTYKULU=a.ID_ARTYKULU
+AND a.OPIS LIKE '%wazon%');
+
+

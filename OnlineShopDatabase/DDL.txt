@@ -1,0 +1,57 @@
+/* ------------------------------------Klient---------------- *
+
+CREATE TABLE Klient
+       (id_klienta NUMBER primary key,
+        imie VARCHAR2(20) NOT NULL ,
+        nazwisko VARCHAR2(20) NOT NULL,
+        liniaadresu_1 VARCHAR2(20) NOT NULL,
+        liniaadresu_2 VARCHAR2(20) NOT NULL,
+        miasto VARCHAR2(20) NOT NULL,
+        panstwo VARCHAR2(20) NOT NULL,
+        nr_telefonu VARCHAR2(20) NOT NULL);
+
+/* ------------------------------Opiekun_zamowienia---------- */
+
+CREATE TABLE Opiekun_zamowienia
+       (id_opiekuna NUMBER primary key,
+        imie VARCHAR2(20) NOT NULL,
+        nazwisko VARCHAR2(20) NOT NULL,
+        data_urodzenia DATE NOT NULL,
+        data_zatrudnienia DATE NOT NULL);
+
+/* -------------------------------Dane_zamowienia----------- */
+CREATE TABLE Dane_zamowienia
+      (id_zamowienia NUMBER primary key,
+       id_klienta NUMBER NOT NULL references Klient(id_klienta),
+       id_opiekuna NUMBER NOT NULL references Opiekun_zamowienia(id_opiekuna),
+       data_zamówienia DATE NOT NULL, 
+       sposob_realizacji VARCHAR2(30) NOT NULL,
+       koszty_dodatkowe NUMBER(9,2) NOT NULL);
+
+/* ------------------------------------Artykul--------------- */
+
+CREATE TABLE Artykul
+       (id_artykulu NUMBER primary key,
+	opis VARCHAR2(40) NOT NULL,
+	cena_pierwotna NUMBER(9,2) NOT NULL,
+	kod_kreskowy VARCHAR2(13) NOT NULL);
+
+/* ------------------------------Zamowione_artykuly---------- */
+
+CREATE TABLE Zamowione_artykuly
+	(id_zamowienia NUMBER NOT NULL references Dane_zamowienia(id_zamowienia),
+	id_artykulu NUMBER NOT NULL references Artykul(id_artykulu),
+	ilosc NUMBER NOT NULL,
+              srednia_cena_sztuki NUMBER(9,2) NOT NULL);
+
+/* ------------------------------------Magazyn--------------- */
+
+CREATE TABLE Magazyn
+	(id_artykulu NUMBER NOT NULL references Artykul(id_artykulu),
+               ilosc_sztuk NUMBER NOT NULL);
+
+/* -----------------------------Opiekun_i_zamowienia--------- */
+
+CREATE TABLE Opiekun_i_zamowienia
+	(id_zamowienia NUMBER NOT NULL references Dane_zamowienia(id_zamowienia),
+	id_opiekuna NUMBER NOT NULL references Opiekun_zamowienia(id_opiekuna));
